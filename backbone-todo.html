@@ -10,7 +10,7 @@
   <!-- ========= -->
   <style type="text/css">
     #backbone-app ul {
-      list-style-type: none; /* Hides bullet points from todo list */
+      list-style-type: none; /* Hides bullet points from list */
     }
   </style>    
 </head>
@@ -23,10 +23,10 @@
     <center>
     <header id="header">
       <h1>Dynamically Adding Model to Collection</h1>
-      <input id="new-todo" placeholder="Enter Item to add in List" autofocus>
+      <input id="new-record" placeholder="Enter Item to add in List" autofocus>
     </header>
     <section id="main">
-      <ul id="todo-list"></ul>
+      <ul id="record-list"></ul>
     </section>
     </center>
   </section>
@@ -56,25 +56,25 @@
     //--------------
     // Models
     //--------------
-    app.Todo = Backbone.Model.extend();
+    app.SimpleApp = Backbone.Model.extend();
 
     //--------------
     // Collections
     //--------------
-    app.TodoList = Backbone.Collection.extend({
-      model: app.Todo,
+    app.List = Backbone.Collection.extend({
+      model: app.SimpleApp,
       url: '#'
     });
 
     // instance of the Collection
-    app.todoList = new app.TodoList();
+    app.list = new app.List();
 
     //--------------
     // Views
     //--------------
     
-    // renders individual todo items list (li)
-    app.TodoView = Backbone.View.extend({
+    // renders individual items list (li)
+    app.SimpleView = Backbone.View.extend({
       tagName: 'li',
       template: _.template($('#item-template').html()),
       render: function(){
@@ -83,30 +83,30 @@
       }      
     });
 
-    // renders the full list of todo items calling TodoView for each one.
+    // renders the full list of items calling SimpleView for each one.
     app.AppView = Backbone.View.extend({
       el: '#backbone-app',
       initialize: function () {
-        this.input = this.$('#new-todo');
-        app.todoList.on('add', this.addOne, this);
+        this.input = this.$('#new-record');
+        app.list.on('add', this.addOne, this);
       },
       events: {
-        'keypress #new-todo': 'createTodoOnEnter'
+        'keypress #new-record': 'createOnEnter'
       },
-      createTodoOnEnter: function(e){
+      createOnEnter: function(e){
         if ( e.which !== 13 || !this.input.val().trim() ) { // ENTER_KEY = 13
           return;
         }
-        app.todoList.create(this.newAttributes());
+        app.list.create(this.newAttributes());
         this.input.val(''); // clean input box
       },
-      addOne: function(todo){
-        var view = new app.TodoView({model: todo});
-        $('#todo-list').append(view.render().el);
+      addOne: function(m){
+        var view = new app.SimpleView({model: m});
+        $('#record-list').append(view.render().el);
       },
       newAttributes: function(){
         return {
-          title: this.input.val().trim(),
+          title: this.input.val().trim()
         }
       }
     });
